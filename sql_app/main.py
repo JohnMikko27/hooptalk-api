@@ -27,6 +27,14 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def get_users(db: Session = Depends(get_db)):
     return crud.get_users(db=db)
 
+@app.post("/posts", response_model=schemas.Post)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+    return crud.create_post(db, post)
+
+@app.get("/posts")
+def get_posts(db: Session = Depends(get_db)):
+    return crud.get_posts(db)
+
 @app.get("/")
 def get_root():
     return {"Hello": "miks"}

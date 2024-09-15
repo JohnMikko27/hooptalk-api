@@ -21,18 +21,18 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+def get_posts(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Post).offset(skip).limit(limit).all()
+
+def create_post(db: Session, post: schemas.PostCreate):
+    db_post = models.Post(content=post.content, title=post.title, author_id=post.author_id)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
 # def get_items(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.Item).offset(skip).limit(limit).all()
-
-# def get_posts(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(models.Post).offset(skip).limit(limit).all()
-
-# def create_post(db: Session, post: schemas.PostCreate, user_id: int):
-#     db_post = models.Post(content=post.content, title=post.title, author_id=post.author_id)
-#     db.add(db_post)
-#     db.commit()
-#     db.refresh(db_post)
-#     return db_post
 
 # def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 #     db_item = models.Item(**item.model_dump(), owner_id=user_id)

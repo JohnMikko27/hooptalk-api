@@ -20,6 +20,7 @@ class Post(Base):
     title = Column(String, index=True)
     author_id = Column(Integer, ForeignKey("users.id"))
     author = relationship("User", back_populates="posts")
+# posts should have a list of comments also!!!!!!!
 
 class Comment(Base):
     __tablename__ = "comments"
