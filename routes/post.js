@@ -4,6 +4,10 @@ const postController = require('../controllers/postController')
 
 router.get("/:id", postController.getPost)
 
+router.put("/:id", postController.updatePost)
+
+router.delete("/:id", postController.deletePost)
+
 router.post("/", postController.createPost)
 
 router.get("/", postController.getAllPosts)
