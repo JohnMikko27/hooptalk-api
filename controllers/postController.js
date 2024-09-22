@@ -40,3 +40,8 @@ exports.createPost = [
     })
 ]
 
+exports.getAllPosts = asyncHandler(async(req, res, next) => {
+    const allPosts = await prisma.post.findMany()
+
+    res.json(allPosts)
+})
