@@ -5,7 +5,16 @@ const { body, validationResult } = require("express-validator")
 const prisma = new PrismaClient()
 
 exports.getPost = asyncHandler(async(req, res, next) => {
-    res.send('hi get post')
+    const post = await prisma.post.findUnique({
+        where: {
+            id: parseInt(req.params.id)
+        }
+    })
+    if (!post) {
+        res.status(404).json({ message: "Post with that id does not exist"})
+    }
+
+    res.json(post)
 })
 
 exports.createPost = [
@@ -30,3 +39,4 @@ exports.createPost = [
         res.json(post)
     })
 ]
+
