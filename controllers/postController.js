@@ -13,7 +13,7 @@ exports.getPost = asyncHandler(async(req, res, next) => {
     if (!post) {
         res.status(404).json({ message: "Post with that id does not exist"})
     }
-
+    
     res.json(post)
 })
 
