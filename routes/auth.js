@@ -1,7 +1,5 @@
 const express = require("express")
 const passport = require("passport");
-const LocalStrategy = require('passport-local').Strategy;
-
 const router = express.Router()
 const userController = require("../controllers/userController")
 
@@ -17,6 +15,7 @@ router.get("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
+    console.log("logged out")
     res.redirect("/");
   });
 });

@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const { PrismaClient } = require("@prisma/client")
+const bcrypt = require("bcryptjs")
 const { body, validationResult } = require("express-validator")
 
 const prisma = new PrismaClient()
@@ -25,13 +26,19 @@ exports.createUser = [
         if (existingUser) {
             res.status(400).json({ message: "Username already exists. Choose a different one."})
         }
-        const user = await prisma.user.create({
-            data: {
-                username,
-                password
-            }
-        })
 
-        res.json(user)
+        bcrypt.hash(password, 10, async (err, hashedPassword) => {
+            if (err) {
+                res.status(400).json()
+            }
+            const user = await prisma.user.create({
+                data: {
+                    username,
+                    password: hashedPassword
+                }
+            })
+    
+            res.json(user)
+        });
     })
 ]
