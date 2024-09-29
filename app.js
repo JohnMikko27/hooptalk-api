@@ -9,7 +9,14 @@ const app = express()
 const postRouter = require("./routes/post")
 const authRouter = require("./routes/auth")
 
-app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }));
+app.use(session({ 
+    secret: process.env.SECRET, 
+    resave: false, 
+    saveUninitialized: false,
+    cookie: { 
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 100 // 100 years 
+    }
+}));
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -18,7 +25,8 @@ app.use(cors());
 app.use("/posts", postRouter)
 app.use("/", authRouter)
 app.get("/", (req, res) => {
-    console.log(req.user)
+    if (!req.user) console.log("none")
+    else console.log(req.user)
     res.send("hi miks")
 })
 

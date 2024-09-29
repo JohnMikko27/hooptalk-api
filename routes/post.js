@@ -5,21 +5,15 @@ const authController = require("../controllers/authController")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
+const { isAuthenticated, setToken, verifyToken, isAuthor } = authController
+
 router.get("/:postId", postController.getPost)
 
-router.put("/:postId", postController.updatePost)
+router.put("/:postId", isAuthenticated, setToken, verifyToken, isAuthor, postController.updatePost)
 
-router.delete("/:postId", postController.deletePost)
+router.delete("/:postId", isAuthenticated, setToken, verifyToken, isAuthor, postController.deletePost)
 
-router.post("/", authController.verifyToken, (req, res, next) => {
-    jwt.verify(req.token, process.env.SECRET, (err, authData) => {
-        if (err) {
-            res.status(403).json({ message: "Access denied"})
-        } else {
-            next()
-        }
-    })},
-    postController.createPost)
+router.post("/", isAuthenticated, setToken, verifyToken, postController.createPost)
 
 router.get("/", postController.getAllPosts)
 

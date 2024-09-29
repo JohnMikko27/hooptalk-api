@@ -13,7 +13,7 @@ exports.getToken = asyncHandler(async(req, res, next) => {
     })
 })
 
-exports.verifyToken = asyncHandler(async(req, res, next) => {
+exports.setToken = asyncHandler(async(req, res, next) => {
     const bearerHeader = req.headers["authorization"]
     if (typeof bearerHeader !== "undefined") {
         const bearerToken = bearerHeader.split(" ")[1]
@@ -21,6 +21,37 @@ exports.verifyToken = asyncHandler(async(req, res, next) => {
         next()
     } else {
         res.status(403).json({ message: "Access denied" })
+    }
+})
+
+exports.verifyToken = asyncHandler(async(req, res, next) => {
+    jwt.verify(req.token, process.env.SECRET, (err, authData) => {
+        if (err) {
+            res.status(403).json({ message: "Access denied"})
+        } else {
+            next()
+        }
+    })
+})
+
+exports.isAuthenticated = asyncHandler(async(req, res, next) => {
+    if (req.isAuthenticated()) {
+        next()
+    } else {
+        res.redirect("/login")
+    }
+})
+
+exports.isAuthor = asyncHandler(async(req, res, next) => {
+    const post = await prisma.post.findUnique({
+        where: {
+            id: parseInt(req.params.postId)
+        }
+    })
+    if (post.authorId === req.user.id) {
+        next()
+    } else {
+        res.status(403).json({ message: "Forbidden"})
     }
 })
 

@@ -69,7 +69,7 @@ exports.createPost = [
             data: {
                 title,
                 content,
-                authorId: 4 // change this to get currently logged in user
+                authorId: req.user.id
             }
         })
 
