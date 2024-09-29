@@ -18,6 +18,7 @@ app.use(cors());
 app.use("/posts", postRouter)
 app.use("/", authRouter)
 app.get("/", (req, res) => {
+    console.log(req.user)
     res.send("hi miks")
 })
 

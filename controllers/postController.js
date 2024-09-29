@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 exports.getPost = asyncHandler(async(req, res, next) => {
     const post = await prisma.post.findUnique({
         where: {
-            id: parseInt(req.params.id)
+            id: parseInt(req.params.postId)
         }
     })
     if (!post) {
@@ -16,6 +16,7 @@ exports.getPost = asyncHandler(async(req, res, next) => {
     
     res.json(post)
 })
+
 
 exports.updatePost = [
     body("title").trim().notEmpty().withMessage("title cannot be empty"),
@@ -31,7 +32,7 @@ exports.updatePost = [
         const { title, content } = req.body
         const updatedPost = await prisma.post.update({
             where: {
-                id: parseInt(req.params.id)
+                id: parseInt(req.params.postId)
             },
             data: {
                 title,
@@ -46,7 +47,7 @@ exports.updatePost = [
 exports.deletePost = asyncHandler(async(req, res, next) => {
     await prisma.post.delete({
         where: {
-            id: parseInt(req.params.id)
+            id: parseInt(req.params.postId)
         }
     })
 
@@ -68,7 +69,7 @@ exports.createPost = [
             data: {
                 title,
                 content,
-                authorId: 1 // change this to get currently logged in user
+                authorId: 4 // change this to get currently logged in user
             }
         })
 

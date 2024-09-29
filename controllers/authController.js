@@ -2,8 +2,27 @@ const asyncHandler = require("express-async-handler")
 const { PrismaClient } = require("@prisma/client")
 const bcrypt = require("bcryptjs")
 const { body, validationResult } = require("express-validator")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const prisma = new PrismaClient()
+
+exports.getToken = asyncHandler(async(req, res, next) => {
+    jwt.sign({ user: req.user }, process.env.SECRET, (err, token) => {
+        res.json({ token })
+    })
+})
+
+exports.verifyToken = asyncHandler(async(req, res, next) => {
+    const bearerHeader = req.headers["authorization"]
+    if (typeof bearerHeader !== "undefined") {
+        const bearerToken = bearerHeader.split(" ")[1]
+        req.token = bearerToken
+        next()
+    } else {
+        res.status(403).json({ message: "Access denied" })
+    }
+})
 
 exports.createUser = [
     body("username").trim().notEmpty().withMessage("Username cannot be empty."),
