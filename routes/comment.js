@@ -1,14 +1,19 @@
-const express = require("express")
-const router = express.Router()
-const commentController = require("../controllers/commentController")
+const express = require("express");
+const router = express.Router();
+const commentController = require("../controllers/commentController");
+const authController = require("../controllers/authController");
 
-// now add the auth middleware
-router.get("/:postId/comments", (req, res) => res.send(`here: ${req.params.postId}`))
+const { isAuthenticated, setToken, verifyToken, isCommentAuthor } = authController;
 
-router.post("/:postId/comments", commentController.createComment)
+router.post("/:postId/comments", isAuthenticated, setToken, 
+  verifyToken, commentController.createComment);
 
-router.delete("/:postId/comments/:commentId", commentController.deleteComment)
+router.delete("/:postId/comments/:commentId", isAuthenticated, setToken, 
+  verifyToken, isCommentAuthor, commentController.deleteComment);
 
-router.put("/:postId/comments/:commentId", commentController.updateComment)
+router.put("/:postId/comments/:commentId", isAuthenticated, setToken, 
+  verifyToken, isCommentAuthor, commentController.updateComment);
 
-module.exports = router
+router.get("/:postId/comments", (req, res) => res.send(`here: ${req.params.postId}`));
+
+module.exports = router;
