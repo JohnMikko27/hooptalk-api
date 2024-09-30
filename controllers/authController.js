@@ -20,14 +20,14 @@ exports.setToken = asyncHandler(async(req, res, next) => {
     req.token = bearerToken;
     next();
   } else {
-    res.status(403).json({ message: "Access denied" });
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 
 exports.verifyToken = asyncHandler(async(req, res, next) => {
   jwt.verify(req.token, process.env.SECRET, (err, authData) => {
     if (err) {
-      res.status(403).json({ message: "Access denied"});
+      res.status(401).json({ message: "Unauthorized"});
     } else {
       next();
     }
@@ -51,7 +51,7 @@ exports.isPostAuthor = asyncHandler(async(req, res, next) => {
   if (post.authorId === req.user.id) {
     next();
   } else {
-    res.status(403).json({ message: "Forbidden"});
+    res.status(403).json({ message: "You do not have permission..."});
   }
 });
 
@@ -62,7 +62,7 @@ exports.isCommentAuthor = asyncHandler(async(req, res, next) => {
   if (comment.authorId === req.user.id) {
     next();
   } else {
-    res.status(403).json({ message: "Forbidden"});
+    res.status(403).json({ message: "You do not have permission..."});
   }
 });
 
@@ -76,7 +76,6 @@ exports.createUser = [
   asyncHandler(async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(errors);
       return res.status(400).json({ errors: errors.array()});
     }
 

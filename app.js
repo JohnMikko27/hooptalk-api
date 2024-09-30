@@ -11,6 +11,8 @@ const authRouter = require("./routes/auth");
 const commentRouter = require("./routes/comment");
 
 app.use(session({ 
+  store: new (require('connect-pg-simple')(session))({
+  }),
   secret: process.env.SECRET, 
   resave: false, 
   saveUninitialized: false,
@@ -27,9 +29,7 @@ app.use("/posts", commentRouter);
 app.use("/posts", postRouter);
 app.use("/", authRouter);
 app.get("/", (req, res) => {
-  if (!req.user) console.log("none");
-  else console.log(req.user);
-  res.send("hi miks");
+  res.send("hi user");
 });
 
 app.listen(3000, () => console.log("Server listening on port 3000..."));
