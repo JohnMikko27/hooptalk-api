@@ -10,8 +10,9 @@ async function main() {
     //         postId: 1
     //     }
     // })
-    // const allUsers = await prisma.user.findMany({ include: {posts: true, comments: true}})
+    // const allUsers = await prisma.post.findMany({ include: { comments: true }})
     // console.dir(allUsers, { depth: null })
+    // console.log(allUsers, {depth})
 }
   
 main()
