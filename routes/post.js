@@ -1,14 +1,19 @@
 const express = require('express')
 const router = express.Router()
 const postController = require('../controllers/postController')
+const authController = require("../controllers/authController")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
-router.get("/:id", postController.getPost)
+const { isAuthenticated, setToken, verifyToken, isAuthor } = authController
 
-router.put("/:id", postController.updatePost)
+router.get("/:postId", postController.getPost)
 
-router.delete("/:id", postController.deletePost)
+router.put("/:postId", isAuthenticated, setToken, verifyToken, isAuthor, postController.updatePost)
 
-router.post("/", postController.createPost)
+router.delete("/:postId", isAuthenticated, setToken, verifyToken, isAuthor, postController.deletePost)
+
+router.post("/", isAuthenticated, setToken, verifyToken, postController.createPost)
 
 router.get("/", postController.getAllPosts)
 
