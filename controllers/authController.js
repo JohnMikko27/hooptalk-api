@@ -42,13 +42,24 @@ exports.isAuthenticated = asyncHandler(async(req, res, next) => {
     }
 })
 
-exports.isAuthor = asyncHandler(async(req, res, next) => {
+exports.isPostAuthor = asyncHandler(async(req, res, next) => {
     const post = await prisma.post.findUnique({
         where: {
             id: parseInt(req.params.postId)
         }
     })
     if (post.authorId === req.user.id) {
+        next()
+    } else {
+        res.status(403).json({ message: "Forbidden"})
+    }
+})
+
+exports.isCommentAuthor = asyncHandler(async(req, res, next) => {
+    const comment = await prisma.comment.findUnique({
+        where: { id: parseInt(req.params.commentId)}
+    })
+    if (comment.authorId === req.user.id) {
         next()
     } else {
         res.status(403).json({ message: "Forbidden"})
