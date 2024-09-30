@@ -5,12 +5,19 @@ const passport = require("passport");
 require("dotenv").config();
 require("./auth/passport");
 
+// i should check every route and make sure its working as intended
+// only authors/creators can delete/update their own posts/comments, should be error if not
+// only able to create posts/comments if logged in
+// read deployment lesson on TOP, deploy and get started on the frontend
+
 const app = express();
 const postRouter = require("./routes/post");
 const authRouter = require("./routes/auth");
 const commentRouter = require("./routes/comment");
 
 app.use(session({ 
+  store: new (require('connect-pg-simple')(session))({
+  }),
   secret: process.env.SECRET, 
   resave: false, 
   saveUninitialized: false,
