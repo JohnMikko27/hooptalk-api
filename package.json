@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "prisma migrate deploy",
-    "create-session-table": "psql $DATABASE_URL -f ./prisma/create_session_table.sql",
     "start": "node app.js"
   },
   "author": "",
