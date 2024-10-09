@@ -25,10 +25,11 @@ exports.setToken = asyncHandler(async(req, res, next) => {
 });
 
 exports.verifyToken = asyncHandler(async(req, res, next) => {
-  jwt.verify(req.token, process.env.SECRET, (err, authData) => {
+  jwt.verify(req.token, process.env.SECRET, (err, data) => {
     if (err) {
       res.status(401).json({ message: "Unauthorized"});
     } else {
+      req.user = data.user
       next();
     }
   });

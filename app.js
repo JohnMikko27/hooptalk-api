@@ -16,8 +16,8 @@ const authRouter = require("./routes/auth");
 const commentRouter = require("./routes/comment");
 
 app.use(session({ 
-  store: new (require('connect-pg-simple')(session))({
-  }),
+  // store: new (require('connect-pg-simple')(session))({
+  // }),
   secret: process.env.SECRET, 
   resave: false, 
   saveUninitialized: false,

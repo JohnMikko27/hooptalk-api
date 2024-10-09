@@ -14,7 +14,7 @@ router.put("/:postId", isAuthenticated, setToken,
 router.delete("/:postId", isAuthenticated, setToken, 
   verifyToken, isPostAuthor, postController.deletePost);
 
-router.post("/", isAuthenticated, setToken, verifyToken, postController.createPost);
+router.post("/", setToken, verifyToken, postController.createPost);
 
 router.get("/", postController.getAllPosts);
 
