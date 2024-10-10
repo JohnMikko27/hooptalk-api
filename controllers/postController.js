@@ -6,14 +6,12 @@ const prisma = new PrismaClient();
 
 exports.getPost = asyncHandler(async(req, res, next) => {
   const post = await prisma.post.findUnique({
-    where: {
-      id: parseInt(req.params.postId)
-    }
+    where: { id: parseInt(req.params.postId) }, 
+    include: { author: true, comments: true }
   });
   if (!post) {
     res.status(404).json({ message: "Post with that id does not exist"});
   }
-    
   res.json(post);
 });
 
