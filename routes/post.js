@@ -16,6 +16,6 @@ router.delete("/:postId", isAuthenticated, setToken,
 
 router.post("/", setToken, verifyToken, postController.createPost);
 
-router.get("/", postController.getAllPosts);
+router.get("/", setToken, verifyToken, postController.getAllPosts);
 
 module.exports = router;
