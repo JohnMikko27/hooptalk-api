@@ -37,18 +37,24 @@ exports.updatePost = [
       }
     });
 
-    res.json(updatedPost);
+    res.json({ status: 200, message: "Successfully updated post" });
   })
 ];
 
 exports.deletePost = asyncHandler(async(req, res, next) => {
+  await prisma.comment.deleteMany({ 
+    where: { 
+      postId: parseInt(req.params.postId) 
+    }
+  });
+
   await prisma.post.delete({
     where: {
       id: parseInt(req.params.postId)
     }
   });
 
-  res.json({ message: "Successfully deleted post" });
+  res.json({ status: 200, message: "Successfully deleted post" });
 });
 
 exports.createPost = [
