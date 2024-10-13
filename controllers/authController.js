@@ -35,13 +35,14 @@ exports.verifyToken = asyncHandler(async(req, res, next) => {
   });
 });
 
-exports.isAuthenticated = asyncHandler(async(req, res, next) => {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-});
+exports.getUser = asyncHandler(async(req, res, next) => {
+  const { id } = req.params;
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(id) }
+  });
+  console.log(user)
+  res.json(user)
+})
 
 exports.isPostAuthor = asyncHandler(async(req, res, next) => {
   const post = await prisma.post.findUnique({

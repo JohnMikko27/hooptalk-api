@@ -82,7 +82,7 @@ exports.createPost = [
 exports.getAllPosts = asyncHandler(async(req, res, next) => {
   const allPosts = await prisma.post.findMany({
     include: {
-      author: true
+      author: true,
     }
   });
 

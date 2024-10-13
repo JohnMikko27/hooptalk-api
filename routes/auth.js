@@ -1,11 +1,12 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
-const authController = require("../controllers/authController");
+const { setToken, verifyToken, 
+  createUser, getToken, getUser } = require("../controllers/authController");
 
-router.post("/signup", authController.createUser);
+router.post("/signup", createUser);
 
-router.post("/login", passport.authenticate("local"), authController.getToken);
+router.post("/login", passport.authenticate("local"), getToken);
 
 router.get("/login", (req, res) => res.send("login route"));
 
@@ -17,5 +18,7 @@ router.get("/logout", (req, res, next) => {
     res.json({ message: "Successfully logged out"});
   });
 });
+
+router.get("/users/:id", setToken, verifyToken, getUser);
 
 module.exports = router;
