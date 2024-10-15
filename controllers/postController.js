@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 exports.getPost = asyncHandler(async(req, res, next) => {
   const post = await prisma.post.findUnique({
     where: { id: parseInt(req.params.postId) }, 
-    include: { author: true, comments: true }
+    include: { author: true, posts: true }
   });
   if (!post) {
     res.status(404).json({ message: "Post with that id does not exist"});
@@ -42,7 +42,7 @@ exports.updatePost = [
 ];
 
 exports.deletePost = asyncHandler(async(req, res, next) => {
-  await prisma.comment.deleteMany({ 
+  await prisma.post.deleteMany({ 
     where: { 
       postId: parseInt(req.params.postId) 
     }
@@ -87,4 +87,39 @@ exports.getAllPosts = asyncHandler(async(req, res, next) => {
   });
 
   res.json(allPosts);
+});
+
+exports.likePost = asyncHandler(async(req, res, next) => {
+  // get post, get userId, 
+  // check if userId is already in post.userLiked 
+  // if it is, remove it and decrement upvotes
+  // if it isn't, add it and increment upvotes
+  console.log(req.user)
+  console.log(req.user.id)
+
+  const post = await prisma.post.findUnique({
+    where: { id: parseInt(req.params.postId) }
+  })
+  const alreadyLiked = post.usersLiked.includes(req.user.id)
+  if (alreadyLiked) {
+    await prisma.post.update({
+      where: { id: parseInt(req.params.postId) },
+      data: {
+        upvotes: { decrement: 1 },
+        usersLiked: { set: post.usersLiked.filter(id => id !== req.user.id )}
+      }
+    })
+
+    res.json({ status: 200, message: "Post successfully unliked." })
+  } else {
+    await prisma.post.update({
+      where: { id: parseInt(req.params.postId) },
+      data: {
+        upvotes: { increment: 1 },
+        usersLiked: { push: req.user.id }
+      }
+    })
+
+    res.json({ status: 200, message: "Post successfully liked." })
+  }
 });

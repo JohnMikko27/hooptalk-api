@@ -6,6 +6,10 @@ require("dotenv").config();
 
 const { setToken, verifyToken, isPostAuthor } = authController;
 
+
+router.post("/:postId/like", setToken, 
+  verifyToken, postController.likePost);
+
 router.get("/:postId", postController.getPost);
 
 router.put("/:postId", setToken, 

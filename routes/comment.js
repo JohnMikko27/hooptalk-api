@@ -14,6 +14,7 @@ router.delete("/:postId/comments/:commentId", setToken,
 router.put("/:postId/comments/:commentId", setToken, 
   verifyToken, isCommentAuthor, commentController.updateComment);
 
+
 router.get("/:postId/comments", (req, res) => res.send(`here: ${req.params.postId}`));
 
 module.exports = router;
