@@ -40,7 +40,7 @@ exports.getUser = asyncHandler(async(req, res, next) => {
   const user = await prisma.user.findUnique({
     where: { id: parseInt(id) }
   });
-  console.log(user)
+  
   res.json(user)
 })
 
@@ -100,7 +100,7 @@ exports.createUser = [
         }
       });
     
-      res.json(user);
+      res.json({ status: 200, message: "User successfully created."});
     });
   })
 ];

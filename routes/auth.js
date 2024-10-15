@@ -15,7 +15,7 @@ router.get("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.json({ message: "Successfully logged out"});
+    res.json({ status: 200, message: "Successfully logged out"});
   });
 });
 

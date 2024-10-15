@@ -37,7 +37,7 @@ exports.updatePost = [
       }
     });
 
-    res.json({ status: 200, message: "Successfully updated post" });
+    res.json({ status: 200, message: "Post successfully updated." });
   })
 ];
 
@@ -75,7 +75,7 @@ exports.createPost = [
       }
     });
 
-    res.json(post);
+    res.json({ status: 200, message: "Post successfully created." });
   })
 ];
 

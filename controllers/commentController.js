@@ -26,7 +26,7 @@ exports.createComment = [
       }
     });
 
-    res.json(comment);
+    res.json({ status: 200, "message": "Comment successfully deleted." });
   })
 ];
 
@@ -35,7 +35,7 @@ exports.deleteComment = asyncHandler(async(req, res, next) => {
     where: { id: parseInt(req.params.commentId)}
   });
 
-  res.json({ message: "Comment successfully deleted"});
+  res.json({ status: 200, message: "Comment successfully deleted."});
 });
 
 exports.updateComment = [
@@ -54,6 +54,6 @@ exports.updateComment = [
       }
     });
 
-    res.json(updatedComment);
+    res.json({ status: 200, message: "Comment successfully updated."});
   })
 ];
