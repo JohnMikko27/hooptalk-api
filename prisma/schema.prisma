@@ -14,24 +14,25 @@ datasource db {
 }
 
 model Comment {
-  id         Int      @id @default(autoincrement())
-  content    String
-  createdAt  DateTime @default(now())
-  author     User     @relation(fields: [authorId], references: [id])
-  authorId   Int
-  post       Post     @relation(fields: [postId], references: [id])
-  postId     Int
-  usersLiked Int[]
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime  @default(now())
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int
-  comments  Comment[]
+  id         Int       @id @default(autoincrement())
+  title      String
+  content    String
+  createdAt  DateTime  @default(now())
+  author     User      @relation(fields: [authorId], references: [id])
+  authorId   Int
+  comments   Comment[]
+  usersLiked Int[]     @default([])
+  upvotes    Int       @default(0)
 }
 
 model User {
