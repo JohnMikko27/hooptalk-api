@@ -36,11 +36,10 @@ exports.verifyToken = asyncHandler(async(req, res, next) => {
 });
 
 exports.getUser = asyncHandler(async(req, res, next) => {
-  const { id } = req.params;
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(id) }
+    where: { id: parseInt(req.params.id) }
   });
-  
+
   res.json(user)
 })
 
