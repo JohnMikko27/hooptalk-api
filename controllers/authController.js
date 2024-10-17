@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 
 exports.getToken = asyncHandler(async(req, res, next) => {
   jwt.sign({ user: req.user }, process.env.SECRET, (err, token) => {
-    res.json({ token });
+    res.json({ token, user: { id: req.user.id, username: req.user.username } });
   });
 });
 
