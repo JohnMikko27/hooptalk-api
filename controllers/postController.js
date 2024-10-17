@@ -74,23 +74,36 @@ exports.createPost = [
 ];
 
 exports.getAllPosts = asyncHandler(async(req, res, next) => {
+  const filter = req.query.sort
+  if (filter === "latest" || filter === "oldest") {
+    const allPosts = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { createdAt: filter === "latest" ? "desc" : "asc" }
+    }) 
+
+    return res.json(allPosts);
+  } else if (filter === "popular") {
+    const allPosts = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { upvotes: "desc"}
+    })
+    
+    return res.json(allPosts);
+  }
   const allPosts = await prisma.post.findMany({
-    include: {
-      author: true,
-    }
-  });
+    where: {
+      OR: [
+        { title: { contains: req.query.search }},
+        { content: { contains: req.query.search }},
+      ]
+    },
+    include: { author: true}
+  })
 
   res.json(allPosts);
 });
 
 exports.likePost = asyncHandler(async(req, res, next) => {
-  // get post, get userId, 
-  // check if userId is already in post.userLiked 
-  // if it is, remove it and decrement upvotes
-  // if it isn't, add it and increment upvotes
-  console.log(req.user)
-  console.log(req.user.id)
-
   const post = await prisma.post.findUnique({
     where: { id: parseInt(req.params.postId) }
   })
@@ -104,16 +117,16 @@ exports.likePost = asyncHandler(async(req, res, next) => {
       }
     })
 
-    res.json({ status: 200, message: "Post successfully unliked." })
-  } else {
-    await prisma.post.update({
-      where: { id: parseInt(req.params.postId) },
-      data: {
-        upvotes: { increment: 1 },
-        usersLiked: { push: req.user.id }
-      }
-    })
+    return res.json({ status: 200, message: "Post successfully unliked." })
+  } 
+  
+  await prisma.post.update({
+    where: { id: parseInt(req.params.postId) },
+    data: {
+      upvotes: { increment: 1 },
+      usersLiked: { push: req.user.id }
+    }
+  })
 
-    res.json({ status: 200, message: "Post successfully liked." })
-  }
+  res.json({ status: 200, message: "Post successfully liked." })
 });

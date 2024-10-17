@@ -6,7 +6,6 @@ require("dotenv").config();
 
 const { setToken, verifyToken, isPostAuthor } = authController;
 
-
 router.post("/:postId/like", setToken, 
   verifyToken, postController.likePost);
 
@@ -20,6 +19,6 @@ router.delete("/:postId", setToken,
 
 router.post("/", setToken, verifyToken, postController.createPost);
 
-router.get("/", setToken, verifyToken, postController.getAllPosts);
+router.get("/", postController.getAllPosts);
 
 module.exports = router;
