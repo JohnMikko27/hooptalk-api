@@ -42,12 +42,6 @@ exports.updatePost = [
 ];
 
 exports.deletePost = asyncHandler(async(req, res, next) => {
-  await prisma.post.deleteMany({ 
-    where: { 
-      postId: parseInt(req.params.postId) 
-    }
-  });
-
   await prisma.post.delete({
     where: {
       id: parseInt(req.params.postId)
