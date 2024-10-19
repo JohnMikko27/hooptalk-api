@@ -8,10 +8,33 @@ require("dotenv").config();
 const prisma = new PrismaClient();
 
 exports.getToken = asyncHandler(async(req, res, next) => {
-  jwt.sign({ user: req.user }, process.env.SECRET, (err, token) => {
-    res.json({ token, user: { id: req.user.id, username: req.user.username } });
+  const { username, password } = req.body;
+  const result = await verifyUser(username, password)
+  if (result.status === false) {
+    return res.status(401).json({ status: 401, message: "Unauthorized" })
+  }
+  
+  jwt.sign({ user: result.user }, process.env.SECRET, (err, token) => {
+    res.json({ token, user: { id: result.user.id, username: result.user.username } });
   });
 });
+
+const verifyUser = async (username, password) => {
+  const user = await prisma.user.findUnique({
+    where: { username: username },
+  });
+
+  if (!user) {
+    return { status: false, message: 'Incorrect username' };
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return { status: false, message: 'Incorrect password' };
+  }
+
+  return { user };
+};
 
 exports.setToken = asyncHandler(async(req, res, next) => {
   const bearerHeader = req.headers["authorization"];

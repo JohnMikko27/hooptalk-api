@@ -61,6 +61,7 @@ exports.createPost = [
       return res.status(400).json({ errors: errors.array()});
     }
     const { title, content } = req.body;
+    console.log(req.user)
     const post = await prisma.post.create({
       data: {
         title,
