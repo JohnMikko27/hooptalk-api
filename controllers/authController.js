@@ -15,7 +15,12 @@ exports.getToken = asyncHandler(async(req, res, next) => {
   }
   
   jwt.sign({ user: result.user }, process.env.SECRET, (err, token) => {
-    res.json({ token, user: { id: result.user.id, username: result.user.username } });
+    res.json({ 
+      status: 200, 
+      token, 
+      user: { id: result.user.id, username: result.user.username },
+      message: "Login successful." 
+    });
   });
 });
 
@@ -115,14 +120,14 @@ exports.createUser = [
       if (err) {
         res.status(400).json();
       }
-      const user = await prisma.user.create({
+      await prisma.user.create({
         data: {
           username,
           password: hashedPassword
         }
       });
     
-      res.json({ status: 200, message: "User successfully created."});
+      res.json({ status: 200, message: "User successfully created." });
     });
   })
 ];

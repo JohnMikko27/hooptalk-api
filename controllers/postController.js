@@ -27,7 +27,7 @@ exports.updatePost = [
     }
         
     const { title, content } = req.body;
-    const updatedPost = await prisma.post.update({
+    await prisma.post.update({
       where: {
         id: parseInt(req.params.postId)
       },
@@ -48,7 +48,7 @@ exports.deletePost = asyncHandler(async(req, res, next) => {
     }
   });
 
-  res.json({ status: 200, message: "Successfully deleted post" });
+  res.json({ status: 200, message: "Post successfully deleted." });
 });
 
 exports.createPost = [
@@ -61,8 +61,8 @@ exports.createPost = [
       return res.status(400).json({ errors: errors.array()});
     }
     const { title, content } = req.body;
-    console.log(req.user)
-    const post = await prisma.post.create({
+
+    await prisma.post.create({
       data: {
         title,
         content,
