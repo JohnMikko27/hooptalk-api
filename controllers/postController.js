@@ -60,13 +60,13 @@ exports.createPost = [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array()});
     }
-    const { title, content } = req.body;
-
+    const { title, content, media } = req.body;
     const post = await prisma.post.create({
       data: {
         title,
         content,
-        authorId: req.user.id
+        authorId: req.user.id,
+        imgUrl: media
       }
     });
 
