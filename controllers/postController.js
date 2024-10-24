@@ -62,7 +62,7 @@ exports.createPost = [
     }
     const { title, content } = req.body;
 
-    await prisma.post.create({
+    const post = await prisma.post.create({
       data: {
         title,
         content,
@@ -70,7 +70,7 @@ exports.createPost = [
       }
     });
 
-    res.json({ status: 200, message: "Post successfully created." });
+    res.json({ status: 200, message: "Post successfully created.", post });
   })
 ];
 

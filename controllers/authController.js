@@ -13,7 +13,7 @@ exports.getToken = asyncHandler(async(req, res, next) => {
   if (result.status === false) {
     return res.status(401).json({ status: 401, message: "Unauthorized" })
   }
-  
+
   jwt.sign({ user: result.user }, process.env.SECRET, (err, token) => {
     res.json({ 
       status: 200, 
