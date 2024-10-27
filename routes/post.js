@@ -4,17 +4,20 @@ const postController = require("../controllers/postController");
 const authController = require("../controllers/authController");
 require("dotenv").config();
 
-const { isAuthenticated, setToken, verifyToken, isPostAuthor } = authController;
+const { setToken, verifyToken, isPostAuthor } = authController;
+
+router.post("/:postId/like", setToken, 
+  verifyToken, postController.likePost);
 
 router.get("/:postId", postController.getPost);
 
-router.put("/:postId", isAuthenticated, setToken, 
+router.put("/:postId", setToken, 
   verifyToken, isPostAuthor, postController.updatePost);
 
-router.delete("/:postId", isAuthenticated, setToken, 
+router.delete("/:postId", setToken, 
   verifyToken, isPostAuthor, postController.deletePost);
 
-router.post("/", isAuthenticated, setToken, verifyToken, postController.createPost);
+router.post("/", setToken, verifyToken, postController.createPost);
 
 router.get("/", postController.getAllPosts);
 

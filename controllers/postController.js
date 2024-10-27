@@ -6,14 +6,12 @@ const prisma = new PrismaClient();
 
 exports.getPost = asyncHandler(async(req, res, next) => {
   const post = await prisma.post.findUnique({
-    where: {
-      id: parseInt(req.params.postId)
-    }
+    where: { id: parseInt(req.params.postId) }, 
+    include: { author: true, comments: true }
   });
   if (!post) {
-    res.status(404).json({ message: "Post with that id does not exist"});
+    return res.status(404).json({ message: "Post with that id does not exist"});
   }
-    
   res.json(post);
 });
 
@@ -29,7 +27,7 @@ exports.updatePost = [
     }
         
     const { title, content } = req.body;
-    const updatedPost = await prisma.post.update({
+    await prisma.post.update({
       where: {
         id: parseInt(req.params.postId)
       },
@@ -39,7 +37,7 @@ exports.updatePost = [
       }
     });
 
-    res.json(updatedPost);
+    res.json({ status: 200, message: "Post successfully updated." });
   })
 ];
 
@@ -50,7 +48,7 @@ exports.deletePost = asyncHandler(async(req, res, next) => {
     }
   });
 
-  res.json({ message: "Successfully deleted post" });
+  res.json({ status: 200, message: "Post successfully deleted." });
 });
 
 exports.createPost = [
@@ -62,21 +60,74 @@ exports.createPost = [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array()});
     }
-    const { title, content } = req.body;
+    const { title, content, media } = req.body;
     const post = await prisma.post.create({
       data: {
         title,
         content,
-        authorId: req.user.id
+        authorId: req.user.id,
+        imgUrl: media
       }
     });
 
-    res.json(post);
+    res.json({ status: 200, message: "Post successfully created.", post });
   })
 ];
 
 exports.getAllPosts = asyncHandler(async(req, res, next) => {
-  const allPosts = await prisma.post.findMany();
+  const filter = req.query.sort
+  if (filter === "latest" || filter === "oldest") {
+    const allPosts = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { createdAt: filter === "latest" ? "desc" : "asc" }
+    }) 
+
+    return res.json(allPosts);
+  } else if (filter === "popular") {
+    const allPosts = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { upvotes: "desc"}
+    })
+    
+    return res.json(allPosts);
+  }
+  const allPosts = await prisma.post.findMany({
+    where: {
+      OR: [
+        { title: { contains: req.query.search }},
+        { content: { contains: req.query.search }},
+      ]
+    },
+    include: { author: true}
+  })
 
   res.json(allPosts);
+});
+
+exports.likePost = asyncHandler(async(req, res, next) => {
+  const post = await prisma.post.findUnique({
+    where: { id: parseInt(req.params.postId) }
+  })
+  const alreadyLiked = post.usersLiked.includes(req.user.id)
+  if (alreadyLiked) {
+    await prisma.post.update({
+      where: { id: parseInt(req.params.postId) },
+      data: {
+        upvotes: { decrement: 1 },
+        usersLiked: { set: post.usersLiked.filter(id => id !== req.user.id )}
+      }
+    })
+
+    return res.json({ status: 200, message: "Post successfully unliked." })
+  } 
+  
+  await prisma.post.update({
+    where: { id: parseInt(req.params.postId) },
+    data: {
+      upvotes: { increment: 1 },
+      usersLiked: { push: req.user.id }
+    }
+  })
+
+  res.json({ status: 200, message: "Post successfully liked." })
 });

@@ -1,8 +1,3 @@
-// when creating comments, I have to get the postId from the url 
-// and then find postId in db and add the comment to that Post's comments array?
-
-// and then I have to add authorization so that only the author of the comment can actually update/delete it
-
 const asyncHandler = require("express-async-handler");
 const { PrismaClient } = require("@prisma/client");
 const { body, validationResult } = require("express-validator");
@@ -26,7 +21,7 @@ exports.createComment = [
       }
     });
 
-    res.json(comment);
+    res.json({ status: 200, "message": "Comment successfully created.", comment: comment});
   })
 ];
 
@@ -35,7 +30,7 @@ exports.deleteComment = asyncHandler(async(req, res, next) => {
     where: { id: parseInt(req.params.commentId)}
   });
 
-  res.json({ message: "Comment successfully deleted"});
+  res.json({ status: 200, message: "Comment successfully deleted." });
 });
 
 exports.updateComment = [
@@ -54,6 +49,6 @@ exports.updateComment = [
       }
     });
 
-    res.json(updatedComment);
+    res.json({ status: 200, message: "Comment successfully updated." });
   })
 ];

@@ -8,10 +8,38 @@ require("dotenv").config();
 const prisma = new PrismaClient();
 
 exports.getToken = asyncHandler(async(req, res, next) => {
-  jwt.sign({ user: req.user }, process.env.SECRET, (err, token) => {
-    res.json({ token });
+  const { username, password } = req.body;
+  const result = await verifyUser(username, password)
+  if (result.status === false) {
+    return res.status(401).json({ status: 401, message: "Unauthorized" })
+  }
+
+  jwt.sign({ user: result.user }, process.env.SECRET, (err, token) => {
+    res.json({ 
+      status: 200, 
+      token, 
+      user: { id: result.user.id, username: result.user.username },
+      message: "Login successful." 
+    });
   });
 });
+
+const verifyUser = async (username, password) => {
+  const user = await prisma.user.findUnique({
+    where: { username: username },
+  });
+
+  if (!user) {
+    return { status: false, message: 'Incorrect username' };
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return { status: false, message: 'Incorrect password' };
+  }
+
+  return { user };
+};
 
 exports.setToken = asyncHandler(async(req, res, next) => {
   const bearerHeader = req.headers["authorization"];
@@ -25,22 +53,23 @@ exports.setToken = asyncHandler(async(req, res, next) => {
 });
 
 exports.verifyToken = asyncHandler(async(req, res, next) => {
-  jwt.verify(req.token, process.env.SECRET, (err, authData) => {
+  jwt.verify(req.token, process.env.SECRET, (err, data) => {
     if (err) {
       res.status(401).json({ message: "Unauthorized"});
     } else {
+      req.user = data.user
       next();
     }
   });
 });
 
-exports.isAuthenticated = asyncHandler(async(req, res, next) => {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-});
+exports.getUser = asyncHandler(async(req, res, next) => {
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(req.params.id) }
+  });
+
+  res.json(user)
+})
 
 exports.isPostAuthor = asyncHandler(async(req, res, next) => {
   const post = await prisma.post.findUnique({
@@ -91,14 +120,14 @@ exports.createUser = [
       if (err) {
         res.status(400).json();
       }
-      const user = await prisma.user.create({
+      await prisma.user.create({
         data: {
           username,
           password: hashedPassword
         }
       });
     
-      res.json(user);
+      res.json({ status: 200, message: "User successfully created." });
     });
   })
 ];
