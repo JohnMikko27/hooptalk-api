@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+if (process.env.NODE_ENV === 'production') {
+  process.env.DATABASE_URL = process.env.PRODUCTION_DATABASE_URL;
+}
+
 const app = express();
 const postRouter = require("./routes/post");
 const authRouter = require("./routes/auth");
