@@ -7,6 +7,12 @@ const postRouter = require("./routes/post");
 const authRouter = require("./routes/auth");
 const commentRouter = require("./routes/comment");
 
+if (process.env.NODE_ENV === "production") {
+  process.env.DATABASE_URL = process.env.PROD_DATABASE_URL;
+} else {
+  process.env.DATABASE_URL = process.env.DEV_DATABASE_URL;
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
