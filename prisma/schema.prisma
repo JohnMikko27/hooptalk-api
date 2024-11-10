@@ -43,4 +43,5 @@ model User {
   createdAt DateTime  @default(now())
   posts     Post[]
   comments  Comment[]
+  pfpUrl    String?
 }
