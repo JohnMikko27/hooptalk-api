@@ -18,7 +18,7 @@ exports.getToken = asyncHandler(async(req, res, next) => {
     res.json({ 
       status: 200, 
       token, 
-      user: { id: result.user.id, username: result.user.username },
+      user: { id: result.user.id, username: result.user.username, pfp: result.user.pfpUrl },
       message: "Login successful." 
     });
   });
@@ -131,3 +131,13 @@ exports.createUser = [
     });
   })
 ];
+
+// add rest of fields once I implement it in frontend
+exports.updateUser = asyncHandler(async(req, res, next) => {
+  console.log(req.body)
+  await prisma.user.update({
+    where: { id: req.user.id },
+    data: { pfpUrl: req.body.media }
+  })
+  res.status(200).json({ message: "ok"})
+})
