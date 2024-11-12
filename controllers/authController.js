@@ -14,12 +14,13 @@ exports.getToken = asyncHandler(async(req, res, next) => {
     return res.status(401).json({ status: 401, message: "Unauthorized" })
   }
 
-  jwt.sign({ user: result.user }, process.env.SECRET, (err, token) => {
+  jwt.sign({ user: result.user }, process.env.SECRET, async(err, token) => {
+    const userInfo = await getUserInfo(result.user.id)
     res.json({ 
       status: 200, 
       token, 
-      user: { id: result.user.id, username: result.user.username, pfp: result.user.pfpUrl },
-      message: "Login successful." 
+      message: "Login successful.",
+      user: { ...userInfo, password: "" },
     });
   });
 });
@@ -63,12 +64,25 @@ exports.verifyToken = asyncHandler(async(req, res, next) => {
   });
 });
 
-exports.getUser = asyncHandler(async(req, res, next) => {
+const getUserInfo = async(id) => {
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(req.params.id) }
+    where: { id: parseInt(id) },
+    include: { 
+      _count: { 
+        select: { 
+          posts: true,
+          comments: true 
+        } 
+      }
+    }
   });
+  return user
+}
 
-  res.json(user)
+exports.getUser = asyncHandler(async(req, res, next) => {
+  const user = await getUserInfo(req.params.id)
+  
+  res.json({ ...user, password: "" })
 })
 
 exports.isPostAuthor = asyncHandler(async(req, res, next) => {
@@ -135,9 +149,10 @@ exports.createUser = [
 // add rest of fields once I implement it in frontend
 exports.updateUser = asyncHandler(async(req, res, next) => {
   console.log(req.body)
-  await prisma.user.update({
+  const user = await prisma.user.update({
     where: { id: req.user.id },
     data: { pfpUrl: req.body.media }
   })
-  res.status(200).json({ message: "ok"})
+  const userWithoutPassword = {...user, password: ""}
+  res.status(200).json({ message: "User successfully updated.", user: userWithoutPassword })
 })
