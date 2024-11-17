@@ -67,14 +67,14 @@ exports.verifyToken = asyncHandler(async(req, res, next) => {
 const getUserInfo = async(id) => {
   const user = await prisma.user.findUnique({
     where: { id: parseInt(id) },
-    include: { 
-      _count: { 
-        select: { 
-          posts: true,
-          comments: true 
-        } 
-      }
-    }
+    // include: { 
+    //   _count: { 
+    //     select: { 
+    //       posts: true,
+    //       comments: true 
+    //     } 
+    //   }
+    // }
   });
   return user
 }
