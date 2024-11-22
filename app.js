@@ -17,8 +17,6 @@ const prisma = new PrismaClient()
 const postRouter = require("./routes/post");
 const authRouter = require("./routes/auth");
 const commentRouter = require("./routes/comment");
-const server = createServer(app);
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,23 +29,17 @@ app.get("/", (req, res) => {
   res.send("Hi user!")
 });
 
-// also to avoid clunking up app.js maybe add all the socket.io stuff in another file 
-// and just load into here like how i do with dotenv
-// add frontend dev and prod url
-const io = new Server(server, { cors: { origin: "http://localhost:5173" }})
+const server = createServer(app);
+const io = new Server(server, { cors: { origin: "*" }})
 
 io.on("connection", (socket) => {
-  console.log("a user connected")
 
-  socket.on("newComment", async(data) => {
-    console.log(data)
-    // const allComments = await prisma.comment.findMany({ where: { postId: data.postId }})
-    // console.log(allComments)
-    io.emit("updatedComments")
+  socket.on("submitComment", async(data) => {
+    const allComments = await prisma.comment.findMany({ where: { postId: data.postId }})
+    io.emit("allComments", allComments)
   })
   
   socket.on('disconnect', () => {
-    console.log('user disconnected');
     socket.disconnect()
   });
 })
