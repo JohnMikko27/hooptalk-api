@@ -38,6 +38,14 @@ io.on("connection", (socket) => {
     const allComments = await prisma.comment.findMany({ where: { postId: data.postId }})
     io.emit("allComments", allComments)
   })
+
+  socket.on("newPost", async() => {
+    const allPosts = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { createdAt: "desc" }
+    }) 
+    io.emit("allPosts", allPosts)
+  })
   
   socket.on('disconnect', () => {
     socket.disconnect()
