@@ -29,7 +29,7 @@ exports.deleteComment = asyncHandler(async(req, res, next) => {
   await prisma.comment.delete({
     where: { id: parseInt(req.params.commentId)}
   });
-
+  
   res.json({ status: 200, message: "Comment successfully deleted." });
 });
 
@@ -49,6 +49,6 @@ exports.updateComment = [
       }
     });
 
-    res.json({ status: 200, message: "Comment successfully updated." });
+    res.json({ status: 200, message: "Comment successfully updated.", comment: updatedComment });
   })
 ];
