@@ -110,24 +110,26 @@ exports.likePost = asyncHandler(async(req, res, next) => {
   })
   const alreadyLiked = post.usersLiked.includes(req.user.id)
   if (alreadyLiked) {
-    await prisma.post.update({
+    const updatedPost = await prisma.post.update({
       where: { id: parseInt(req.params.postId) },
       data: {
         upvotes: { decrement: 1 },
         usersLiked: { set: post.usersLiked.filter(id => id !== req.user.id )}
-      }
+      }, 
+      include: { comments: true, author: true }
     })
 
-    return res.json({ status: 200, message: "Post successfully unliked." })
+    return res.json({ status: 200, message: "Post successfully unliked.", post: updatedPost })
   } 
   
-  await prisma.post.update({
+  const updatedPost = await prisma.post.update({
     where: { id: parseInt(req.params.postId) },
     data: {
       upvotes: { increment: 1 },
       usersLiked: { push: req.user.id }
-    }
+    },
+    include: { comments: true, author: true }
   })
 
-  res.json({ status: 200, message: "Post successfully liked." })
+  res.json({ status: 200, message: "Post successfully liked.", post: updatedPost })
 });
