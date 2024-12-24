@@ -6,7 +6,7 @@ const authController = require("../controllers/authController");
 const { setToken, verifyToken, isCommentAuthor } = authController;
 
 router.post("/:postId/comments/:commentId/like", setToken, 
-  verifyToken, isCommentAuthor, commentController.likeComment);
+  verifyToken, commentController.likeComment);
 
 router.post("/:postId/comments", setToken, 
   verifyToken, commentController.createComment);
