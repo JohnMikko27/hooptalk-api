@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Comment" ADD COLUMN     "upvotes" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "usersLiked" INTEGER[] DEFAULT ARRAY[]::INTEGER[];
